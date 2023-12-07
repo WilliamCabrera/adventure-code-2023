@@ -21,8 +21,7 @@ const createMap = (data) => {
 
 const mapValue = (value, map) => {
   let result = -1;
-  //const modifiedMap = map.slice(1, map.length);
-  //console.log(map[0]);
+
   map.forEach((interval) => {
     const destRange = interval[0];
     const srcRange = interval[1];
@@ -53,9 +52,8 @@ const findLowerLocation = (map) => {
       return parseInt(item);
     });
 
-  const modifiedMap = map.slice(1, map.length);
-
-  const newMap = modifiedMap
+  const newMap = map
+    .slice(1, map.length)
     .map((item) => {
       return item.slice(1, item.length);
     })
@@ -75,69 +73,6 @@ const findLowerLocation = (map) => {
   return sorted[0];
 };
 
-const sortFullMap = (map) => {
-  const _map = map.slice(1, map.length);
-
-  const sortedMap = _map.map((mapItem) => {
-    const temporalMap = mapItem.slice(1, mapItem.length);
-
-    // sorting by dest rage ASC
-    const sorted = temporalMap.sort((item1, item2) => {
-      return (
-        item1.split(" ").map((elem) => parseInt(elem))[0] -
-        item2.split(" ").map((elem) => parseInt(elem))[0]
-      );
-    });
-
-    return sorted;
-  });
-
-  return sortedMap;
-};
-
-const getBestValue = (seed, ranges, fullRange) => {
-  let currentSeed = seed;
-  //console.log(`seed: ${seed}`);
-
-  ranges.forEach((range) => {
-    const intervals = range.split(" ").map((number) => parseInt(number));
-    const destRange = intervals[0];
-    const srcRange = intervals[1];
-    const lengthRange = intervals[2];
-    //console.log({ initSeed: currentSeed });
-    if (destRange <= currentSeed) {
-      if (srcRange <= currentSeed && currentSeed < srcRange + lengthRange) {
-        currentSeed = destRange + (currentSeed - srcRange);
-      }
-      if (srcRange - currentSeed > 0 && srcRange - currentSeed < fullRange) {
-        currentSeed = destRange;
-      }
-    } else {
-      if (srcRange <= currentSeed && currentSeed < srcRange + lengthRange) {
-        currentSeed =
-          currentSeed > destRange + currentSeed - srcRange
-            ? destRange + currentSeed - srcRange
-            : currentSeed;
-      }
-    }
-    //console.log({ intervals, currentSeed });
-  });
-
-  return currentSeed;
-};
-
-const findLocationVersion2 = (seedInfo, map) => {
-  const { seed, range } = seedInfo;
-
-  let value = seed;
-
-  map.forEach((ranges) => {
-    value = getBestValue(value, ranges, range);
-  });
-
-  return value;
-};
-
 const findLowerLocationVersion2 = (map) => {
   const seeds = map[0][0]
     .split(":")[1]
@@ -147,9 +82,8 @@ const findLowerLocationVersion2 = (map) => {
       return parseInt(item);
     });
 
-  const modifiedMap = map.slice(1, map.length);
-
-  const newMap = modifiedMap
+  const newMap = map
+    .slice(1, map.length)
     .map((item) => {
       return item.slice(1, item.length);
     })
@@ -157,22 +91,20 @@ const findLowerLocationVersion2 = (map) => {
       return newItem.map((line) => {
         return line.split(" ").map((number) => parseInt(number));
       });
-      //return newItem.split(" ").map((number) => parseInt(number));
     });
 
-  //let seedFinal = -1;
-
   let lowest = 9999999999999999999999;
-  for (let index = 0; index < 2; index += 2) {
+  for (let index = 1; index < seeds.length; index += 2) {
     const seed = seeds[index];
     const range = seeds[index + 1];
     let x = 0;
-    console.log(`***started:`);
+    console.log(`***started:${seed},${range}`);
     for (let index1 = seed; index1 < seed + range; index1++) {
       x = findLocation(index1, newMap);
 
       lowest = lowest > x ? x : lowest;
     }
+    console.log(`***finshed: ${seed},${range} *** lowest: ${lowest}`);
   }
 
   console.log({ lowest });

@@ -39,6 +39,7 @@ app.listen(PORT, async () => {
   /*  const day5p1 = await Day5Problem1("./day5/data.txt");
   console.log("****** :", { day5p1 }); */
 
-  const day5p2 = await Day5Problem2("./day5/data.txt");
-  console.log("****** :", { day5p2 });
+  //commented since it takes too long to finish
+  //const day5p2 = await Day5Problem2("./day5/data.txt");
+  //console.log("****** :", { day5p2 });
 });
