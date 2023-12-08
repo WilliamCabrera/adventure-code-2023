@@ -11,6 +11,7 @@ import { Day4Problem1, Day4Problem2 } from "./day4/index.js";
 import { Day5Problem1, Day5Problem2 } from "./day5/index.js";
 import { Day6Problem1, Day6Problem2 } from "./day6/index.js";
 import { Day7Problem1, Day7Problem2 } from "./day7/index.js";
+import { Day8Problem1, Day8Problem2 } from "./day8/index.js";
 
 // Start the server
 app.listen(PORT, async () => {
@@ -53,6 +54,6 @@ app.listen(PORT, async () => {
   console.log("****** :", { day7p1 });
   const day7p2 = await Day7Problem2("./day7/data.txt");
   console.log("****** :", { day7p2 });
-  //const day7p2 = await Day7Problem2("./day6/data.txt");
-  //console.log("****** :", { day7p2 });
+  const day8p1 = await Day8Problem1("./day8/data.txt");
+  console.log("****** :", { day8p1 });
 });
