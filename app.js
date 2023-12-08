@@ -9,6 +9,8 @@ import { Problem4 } from "./day2/problem4/index.js";
 import { Day3Problem1, Day3Problem2 } from "./day3/problem1/index.js";
 import { Day4Problem1, Day4Problem2 } from "./day4/index.js";
 import { Day5Problem1, Day5Problem2 } from "./day5/index.js";
+import { Day6Problem1, Day6Problem2 } from "./day6/index.js";
+import { Day7Problem1, Day7Problem2 } from "./day7/index.js";
 
 // Start the server
 app.listen(PORT, async () => {
@@ -36,10 +38,21 @@ app.listen(PORT, async () => {
   const day4p2 = await Day4Problem2("./day4/data.txt");
   console.log("****** :", { day4p2 });
 
-  /*  const day5p1 = await Day5Problem1("./day5/data.txt");
-  console.log("****** :", { day5p1 }); */
+  const day5p1 = await Day5Problem1("./day5/data.txt");
+  console.log("****** :", { day5p1 });
 
   //commented since it takes too long to finish
   //const day5p2 = await Day5Problem2("./day5/data.txt");
   //console.log("****** :", { day5p2 });
+
+  const day6p1 = await Day6Problem1("./day6/data.txt");
+  console.log("****** :", { day6p1 });
+  const day6p2 = await Day6Problem2("./day6/data.txt");
+  console.log("****** :", { day6p2 });
+  const day7p1 = await Day7Problem1("./day7/data.txt");
+  console.log("****** :", { day7p1 });
+  const day7p2 = await Day7Problem2("./day7/data.txt");
+  console.log("****** :", { day7p2 });
+  //const day7p2 = await Day7Problem2("./day6/data.txt");
+  //console.log("****** :", { day7p2 });
 });
