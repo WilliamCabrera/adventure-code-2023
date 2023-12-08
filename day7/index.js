@@ -1,7 +1,5 @@
 import { isNumber, processFileLineByLine } from "../utils/index.js";
 
-const regex = /^(?:[^A]*A){5}[^A]*$/;
-
 /**
  *  card types
  *  1 - Five of a kind
@@ -15,6 +13,27 @@ const regex = /^(?:[^A]*A){5}[^A]*$/;
 
 const table = { A: 20, K: 19, Q: 18, J: 17, T: 16 };
 const table2 = { A: 20, K: 19, Q: 18, J: 1, T: 16 };
+
+const isFiveKind = (occurrences) => occurrences.length === 1;
+
+const isFourKind = (occurrences) =>
+  occurrences.length === 2 && occurrences.includes(4);
+
+const isFullHouse = (occurrences) =>
+  occurrences.length === 2 && occurrences.includes(2);
+
+const isThreeKind = (occurrences) =>
+  occurrences.length === 3 && occurrences.includes(3);
+
+const isTwoPair = (occurrences) =>
+  occurrences.length === 3 && occurrences.includes(2);
+
+const isOnePair = (occurrences) =>
+  occurrences.length === 4 && occurrences.includes(2);
+
+const isHighCard = (occurrences) => occurrences.length === 5;
+
+//============problem 1============
 
 /**
  *
@@ -49,6 +68,68 @@ const decodeCard = (label) => {
 
   return { occurrences, presence };
 };
+
+const getCardType = (card) => {
+  const { occurrences } = decodeCard(card);
+
+  if (isFiveKind(occurrences)) return 1;
+  if (isFourKind(occurrences)) return 2;
+  if (isFullHouse(occurrences)) return 3;
+  if (isThreeKind(occurrences)) return 4;
+  if (isTwoPair(occurrences)) return 5;
+  if (isOnePair(occurrences)) return 6;
+  if (isHighCard(occurrences)) return 7;
+
+  return 8;
+};
+
+const compareCards = (card1, card2) => {
+  if (card1.type < card2.type) {
+    return card1.type - card2.type;
+  }
+  if (card1.type > card2.type) {
+    return card1.type - card2.type;
+  }
+  if (card1.type === card2.type) {
+    const { label: label1 } = card1;
+    const { label: label2 } = card2;
+    for (let index = 0; index < label1.length; index++) {
+      const char1 = label1[index];
+      const char2 = label2[index];
+      if (char1 !== char2) {
+        const value1 = isNumber(char1) ? parseInt(char1) : table[char1];
+        const value2 = isNumber(char2) ? parseInt(char2) : table[char2];
+        return value2 - value1;
+      }
+    }
+
+    return card1.type - card2.type;
+  }
+};
+
+/**
+ *
+ * @param {*} path
+ * @returns
+ */
+export const Day7Problem1 = async (path) => {
+  const data = await processFileLineByLine(path);
+
+  const cards = parseToCards(data, getCardType);
+  const sortedcards = cards.sort(compareCards);
+
+  const newList = sortedcards.map((card, index) => ({
+    ...card,
+    rank: sortedcards.length - index,
+    win: card.bid * (sortedcards.length - index),
+  }));
+
+  return newList.reduce((acc, currentValue) => {
+    return acc + currentValue.win;
+  }, 0);
+};
+
+//============problem 2============
 
 const decodeCard2 = (label) => {
   let presence = "";
@@ -93,45 +174,11 @@ const decodeCard2 = (label) => {
     }
   }
 
-  //console.log({ label, biggestIndex, presence, occurrences });
-
   occurrences[biggestIndex] += jokerCount;
 
   return { occurrences, presence };
 };
 
-const isFiveKind = (occurrences) => occurrences.length === 1;
-
-const isFourKind = (occurrences) =>
-  occurrences.length === 2 && occurrences.includes(4);
-
-const isFullHouse = (occurrences) =>
-  occurrences.length === 2 && occurrences.includes(2);
-
-const isThreeKind = (occurrences) =>
-  occurrences.length === 3 && occurrences.includes(3);
-
-const isTwoPair = (occurrences) =>
-  occurrences.length === 3 && occurrences.includes(2);
-
-const isOnePair = (occurrences) =>
-  occurrences.length === 4 && occurrences.includes(2);
-
-const isHighCard = (occurrences) => occurrences.length === 5;
-
-const getCardType = (card) => {
-  const { occurrences } = decodeCard(card);
-
-  if (isFiveKind(occurrences)) return 1;
-  if (isFourKind(occurrences)) return 2;
-  if (isFullHouse(occurrences)) return 3;
-  if (isThreeKind(occurrences)) return 4;
-  if (isTwoPair(occurrences)) return 5;
-  if (isOnePair(occurrences)) return 6;
-  if (isHighCard(occurrences)) return 7;
-
-  return 8;
-};
 const getCardType2 = (card) => {
   const { occurrences } = decodeCard2(card);
 
@@ -144,30 +191,6 @@ const getCardType2 = (card) => {
   if (isHighCard(occurrences)) return 7;
 
   return 8;
-};
-
-const compareCards = (card1, card2) => {
-  if (card1.type < card2.type) {
-    return card1.type - card2.type;
-  }
-  if (card1.type > card2.type) {
-    return card1.type - card2.type;
-  }
-  if (card1.type === card2.type) {
-    const { label: label1 } = card1;
-    const { label: label2 } = card2;
-    for (let index = 0; index < label1.length; index++) {
-      const char1 = label1[index];
-      const char2 = label2[index];
-      if (char1 !== char2) {
-        const value1 = isNumber(char1) ? parseInt(char1) : table[char1];
-        const value2 = isNumber(char2) ? parseInt(char2) : table[char2];
-        return value2 - value1;
-      }
-    }
-
-    return card1.type - card2.type;
-  }
 };
 
 const compareCards2 = (card1, card2) => {
@@ -192,28 +215,6 @@ const compareCards2 = (card1, card2) => {
 
     return card1.type - card2.type;
   }
-};
-
-/**
- *
- * @param {*} path
- * @returns
- */
-export const Day7Problem1 = async (path) => {
-  const data = await processFileLineByLine(path);
-
-  const cards = parseToCards(data, getCardType);
-  const sortedcards = cards.sort(compareCards);
-
-  const newList = sortedcards.map((card, index) => ({
-    ...card,
-    rank: sortedcards.length - index,
-    win: card.bid * (sortedcards.length - index),
-  }));
-
-  return newList.reduce((acc, currentValue) => {
-    return acc + currentValue.win;
-  }, 0);
 };
 
 /**
