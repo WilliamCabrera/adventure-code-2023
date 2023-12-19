@@ -18,42 +18,77 @@ const createMap = (data) => {
   return map;
 };
 
-const findTotalStepsToExit = (instructions, map, exit = "ZZZ") => {
+const findTotalStepsToExit = (instructions, map, start, exit = "ZZZ") => {
   // Iterate over the map and get the first entry
-  const firstEntry = map.entries().next().value;
-  //console.log({ instructions, map });
 
-  let currentNode = firstEntry[1];
+  let currentValue = start;
+  let currentNode = map.get(currentValue);
 
   let steps = 0;
-  let index = 0;
 
-  do {
-    const instruction = instructions[index];
-    steps += 1;
-    //console.log({ instruction, currentNode, exit });
-
+  while (exit !== currentValue) {
+    const instruction = instructions[steps % instructions.length];
     if (instruction === "L") {
-      console.log("*** L", { currentNode });
-      if (currentNode.left === exit) {
-        break;
-      }
-      currentNode = map.get(currentNode.left);
+      //console.log("*** L", { currentNode });
+      currentValue = currentNode.left;
     } else {
-      console.log("*** R", { currentNode });
-      if (currentNode.right === exit) {
-        break;
+      //console.log("*** R", { currentNode });
+      currentValue = currentNode.right;
+    }
+    currentNode = map.get(currentValue);
+    //console.log({ currentValue, exit, steps, instruction });
+    steps += 1;
+  }
+
+  return steps;
+};
+
+const EndZ = (str) => str[2] === "Z";
+const EndA = (str) => str[2] === "A";
+
+const isAllZ = (items) => {
+  const filter = items.filter((key) => EndZ(key));
+  return items.length === filter.length;
+};
+
+const finTotalStepsToExitParallel = (instructions, map) => {
+  let items = [...map.keys()].filter((key) => EndA(key));
+  //let items1 = [...map.keys()].filter((key) => EndZ(key));
+  let steps = 0;
+  let tempList = [];
+  let currentNode = null;
+  let currentValue = "";
+
+  while (!isAllZ(items)) {
+    const instIndex = steps % instructions.length;
+    const instruction = instructions[instIndex];
+
+    //console.log("****** items:", items.length);
+    for (let index = 0; index < items.length; index++) {
+      const item = items[index];
+      currentNode = map.get(item);
+      if (instruction === "L") {
+        currentValue = currentNode.left;
+      } else {
+        currentValue = currentNode.right;
       }
-      currentNode = map.get(currentNode.right);
+      tempList.push(currentValue);
     }
+    /*  items.forEach((item) => {
+      currentNode = map.get(item);
+      if (instruction === "L") {
+        currentValue = currentNode.left;
+      } else {
+        currentValue = currentNode.right;
+      }
 
-    index += 1;
-    if (index === instructions.length) {
-      //index = 0;
-      console.log({ steps, currentNode });
-    }
-  } while (index < instructions.length);
-
+      tempList.push(currentValue);
+    }); */
+    //console.log({ tempList });
+    items = [...tempList];
+    tempList = [];
+    steps += 1;
+  }
   return steps;
 };
 
@@ -70,7 +105,7 @@ export const Day8Problem1 = async (path) => {
   const map = createMap(data);
   //console.log({ map, leftRightInstructions });
 
-  return findTotalStepsToExit(leftRightInstructions, map);
+  return findTotalStepsToExit(leftRightInstructions, map, "AAA");
 };
 
 /**
@@ -83,5 +118,5 @@ export const Day8Problem2 = async (path) => {
   const leftRightInstructions = data[0].trim();
   const map = createMap(data);
 
-  return 0;
+  return finTotalStepsToExitParallel(leftRightInstructions, map);
 };

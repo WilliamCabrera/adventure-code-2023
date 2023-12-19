@@ -56,4 +56,6 @@ app.listen(PORT, async () => {
   console.log("****** :", { day7p2 });
   const day8p1 = await Day8Problem1("./day8/data.txt");
   console.log("****** :", { day8p1 });
+  const day8p2 = await Day8Problem2("./day8/data.txt");
+  console.log("****** :", { day8p2 });
 });
